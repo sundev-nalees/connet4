@@ -8,13 +8,13 @@ using namespace std;
 //declaring the player class with name and the symbol it usese
 class Player
 {
- public:
-	string name;
-	char symbol;
+   public:
+      string name;
+	  char symbol;
 };
 
 bool checkLine(vector<char>);
-void printBoard(vector<vector<char>>& board);
+void printBoard(vector<vector<char>> &board);
 void startGame();
 string makePlayer();
 void mainGameLoop(Player &p1, Player &p2);
@@ -40,7 +40,7 @@ void startGame()
 
 void mainGameLoop(Player &p1,Player &p2)
 {
-	int n = 7,m=6;
+	int n = 7,m = 6;
 	vector< vector<char> >board(n, vector<char> (m,' '));
 	int play = 0;//to store which row the symbol has to be placed
 	int turn = 0;//to determine  which player is playing
@@ -48,14 +48,14 @@ void mainGameLoop(Player &p1,Player &p2)
 	while(!gameOver(board,play))
 	{
 		printBoard(board);
-		cout << "Which row from 1 - 7 ?";
+		cout << "Which row from 1 - 7 ?\n";
 		cin >> play;
 		--play;
 		bool placed = false;
         
-		for(int i=0;i<n;i++)
+		for(int i=0;i<6;i++)
 		{
-			if((i==6|| board[play][i+1]!=' ')&&!placed)
+			if((i==6|| board[play][i+1] != ' ') && !placed)
 			{
 				if(turn%2==0)
 				{
@@ -91,14 +91,14 @@ void printBoard(vector<vector<char>> &board)
 	string line = "";
 	for(int i=0;i<6;i++)
 	{
-		cout<<i <<" " << board[0][i] << " " << board[1][i] << " " << board[2][i] << " " << board[3][i] << " " << board[4][i] << " " << board[5][i] << " " << board[6][i] << "\n";
+		cout<<i+1 <<" " << board[0][i] << " " << board[1][i] << " " << board[2][i] << " " << board[3][i] << " " << board[4][i] << " " << board[5][i] << " " << board[6][i] << "\n";
 
 	}
 	cout << "  1 2 3 4 5 6 7 \n\n";
 
 }
 
-bool gameOver(vector<vector<char>>& board, int play)
+bool gameOver(vector<vector<char>> &board, int play)
 {
 	vector<char>vertical;
 	vector<char>horizontal;
@@ -136,14 +136,14 @@ bool gameOver(vector<vector<char>>& board, int play)
 	{
 		for (int i = 0; i < 7; i++)
 		{
-			horizontal.push_back(board[play][i]);
+			horizontal.push_back(board[i][row]);
 			if (DRstart + i >= 0)
 			{
 				DR.push_back(board[i][DRstart + i]);
 			}
 			if (URstart - i <= 5)
 			{
-				UR.push_back(board[i][URstart + i]);
+				UR.push_back(board[i][URstart - i]);
 			}
 
 		}
@@ -159,13 +159,15 @@ bool gameOver(vector<vector<char>>& board, int play)
 			return(false);
 		}
 
-		for (int i = 0; i<int(line.size()) - 3; i++)
+		for (int i = 0; i < int(line.size()) - 3; i++)
 		{
 			if (line[i]!=' '&& line[i]==line[i+1]&&line[i]==line[i+2]&&line[i]==line[i+3])
 			{
 				return(true);
 			}
+			
 		}
+		return(false);
 	}
 	string makePlayer()
 	{
