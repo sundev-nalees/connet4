@@ -100,10 +100,10 @@ void printBoard(vector<vector<char>> &board)
 
 bool gameOver(vector<vector<char>> &board, int play)
 {
-	vector<char>vertical;
-	vector<char>horizontal;
-	vector<char>DR;
-	vector<char>UR;
+	vector<char> vertical;
+	vector<char> horizontal;
+	vector<char> DR;
+	vector<char> UR;
 
 	int row = 10;
 
@@ -161,7 +161,7 @@ bool gameOver(vector<vector<char>> &board, int play)
 
 		for (int i = 0; i < int(line.size()) - 3; i++)
 		{
-			if (line[i]!=' '&& line[i]==line[i+1]&&line[i]==line[i+2]&&line[i]==line[i+3])
+			if (line[i] !=' '&& line[i]==line[i+1]&&line[i]==line[i+2]&&line[i]==line[i+3])
 			{
 				return(true);
 			}
