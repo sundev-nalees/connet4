@@ -11,14 +11,19 @@ class Player
    public:
       string name;
 	  char symbol;
+	  Player() 
+	  {
+		  this->symbol = ' ';
+	  };
+	 
 };
 
 bool checkLine(vector<char>);
-void printBoard(vector<vector<char>> &board);
+void printBoard(char board[][6]);
 void startGame();
 string makePlayer();
 void mainGameLoop(Player &p1, Player &p2);
-bool gameOver(vector<vector<char>> &board, int);
+bool gameOver(char board[][6], int);
 int main()
 {
 	startGame();
@@ -41,7 +46,7 @@ void startGame()
 void mainGameLoop(Player &p1,Player &p2)
 {
 	int n = 7,m = 6;
-	vector< vector<char> >board(n, vector<char> (m,' '));
+	char board[7][6];
 	int play = 0;//to store which row the symbol has to be placed
 	int turn = 0;//to determine  which player is playing
 
@@ -86,7 +91,7 @@ void mainGameLoop(Player &p1,Player &p2)
 	cout << "Congratulations!!!!!!!!";
 }
 //for printing the board or showing the output
-void printBoard(vector<vector<char>> &board)
+void printBoard(char board[][6])
 {
 	string line = "";
 	for(int i=0;i<6;i++)
@@ -98,7 +103,7 @@ void printBoard(vector<vector<char>> &board)
 
 }
 
-bool gameOver(vector<vector<char>> &board, int play)
+bool gameOver(char board[][6], int play)
 {
 	vector<char> vertical;
 	vector<char> horizontal;
