@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="sourceFile\Source.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sourceFile\PlayerDrop.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

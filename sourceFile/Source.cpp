@@ -1,184 +1,249 @@
-#include<iostream>
-#include<vector>
-#include<string>
-
-
+#include <iostream>
 using namespace std;
 
-//declaring the player class with name and the symbol it usese
-class Player
+class playerInfo
 {
-   public:
-      string name;
-	  char symbol;
-	  Player() 
-	  {
-		  this->symbol = ' ';
-	  };
-	 
+public:
+	char playerName[81];
+	char playerID;
 };
 
-bool checkLine(vector<char>);
-void printBoard(char board[][6]);
-void startGame();
-string makePlayer();
-void mainGameLoop(Player &p1, Player &p2);
-bool gameOver(char board[][6], int);
+int PlayerDrop(char board[][10], playerInfo activePlayer);
+void CheckBellow(char board[][10], playerInfo activePlayer, int dropChoice);
+void DisplayBoard(char board[][10]);
+int CheckFour(char board[][10], playerInfo activePlayer);
+int FullBoard(char board[][10]);
+void PlayerWin(playerInfo activePlayer);
+int restart(char board[][10]);
+
 int main()
 {
-	startGame();
-}
-//creating the player using player class
-void startGame() 
-{
-	Player p1;
-	Player p2;
-	p1.name = makePlayer();
-	p1.symbol = 'X';
-	p2.name = makePlayer();
-	p2.symbol = 'O';
+	playerInfo playerOne, playerTwo;
+	char board[9][10];
+	int trueWidth = 7;
+	int trueLength = 6;
+	int playerChoice, win, full, again;
 
-	mainGameLoop(p1,p2);
+	cout << "Let's Play Connect 4" << endl << endl;
+	cout << "Player One please enter your name: ";
+	cin >> playerOne.playerName;
+	playerOne.playerID = 'X';
+	cout << "Player Two please enter your name: ";
+	cin >> playerTwo.playerName;
+	playerTwo.playerID = 'O';
 
-
-}
-
-void mainGameLoop(Player &p1,Player &p2)
-{
-	int n = 7,m = 6;
-	char board[7][6];
-	int play = 0;//to store which row the symbol has to be placed
-	int turn = 0;//to determine  which player is playing
-
-	while(!gameOver(board,play))
+	full = 0;
+	win = 0;
+	again = 0;
+	DisplayBoard(board);
+	do
 	{
-		printBoard(board);
-		cout << "Which row from 1 - 7 ?\n";
-		cin >> play;
-		--play;
-		bool placed = false;
-        
-		for(int i=0;i<6;i++)
+		playerChoice = PlayerDrop(board, playerOne);
+		CheckBellow(board, playerOne, playerChoice);
+		DisplayBoard(board);
+		win = CheckFour(board, playerOne);
+		if (win == 1)
 		{
-			if((i==6|| board[play][i+1] != ' ') && !placed)
+			PlayerWin(playerOne);
+			again = restart(board);
+			if (again == 2)
 			{
-				if(turn%2==0)
-				{
-					board[play][i] = p1.symbol;
-				}
-				else
-				{
-					board[play][i] = p2.symbol;
-				}
-				placed = true;
+				break;
 			}
-			
 		}
-		++turn;
-	}
-	
-	printBoard(board);
 
-	if(turn%2==1)
+		playerChoice = PlayerDrop(board, playerTwo);
+		CheckBellow(board, playerTwo, playerChoice);
+		DisplayBoard(board);
+		win = CheckFour(board, playerTwo);
+		if (win == 1)
+		{
+			PlayerWin(playerTwo);
+			again = restart(board);
+			if (again == 2)
+			{
+				break;
+			}
+		}
+		full = FullBoard(board);
+		if (full == 7)
+		{
+			cout << "The board is full, it is a draw!" << endl;
+			again = restart(board);
+		}
+
+	} while (again != 2);
+
+
+
+	return 0;
+}
+
+int PlayerDrop(char board[][10], playerInfo activePlayer)
+{
+	int dropChoice;
+	do
 	{
-		cout << p1.name << " WinS! ";
+		cout << activePlayer.playerName << "'s Turn ";
+		cout << "Please enter a number between 1 and 7: ";
+		cin >> dropChoice;
+
+		while (board[1][dropChoice] == 'X' || board[1][dropChoice] == 'O')
+		{
+			cout << "That row is full, please enter a new row: ";
+			cin >> dropChoice;
+		}
+
+	} while (dropChoice < 1 || dropChoice > 7);
+
+	return dropChoice;
+}
+
+void CheckBellow(char board[][10], playerInfo activePlayer, int dropChoice)
+{
+	int length, turn;
+	length = 6;
+	turn = 0;
+
+	do
+	{
+		if (board[length][dropChoice] != 'X' && board[length][dropChoice] != 'O')
+		{
+			board[length][dropChoice] = activePlayer.playerID;
+			turn = 1;
+		}
+		else
+			--length;
+	} while (turn != 1);
+
+
+}
+
+void DisplayBoard(char board[][10])
+{
+	int rows = 6, columns = 7, i, ix;
+	cout << " ";
+	for (i = 0; i < 7; i++)
+	{
+		cout << " " << i + 1;
+	}
+	cout << "\n";
+	for (i = 1; i <= rows; i++)
+	{
+		cout << i;
+		for (ix = 1; ix <= columns; ix++)
+		{
+			if (board[i][ix] != 'X' && board[i][ix] != 'O')
+			{
+				board[i][ix] = ' ';
+			}
+
+
+			cout << " " << board[i][ix];
+
+		}
+
+		cout << "|" << endl;
+	}
+
+}
+
+int CheckFour(char board[][10], playerInfo activePlayer)
+{
+	char aPlayer;
+	int win;
+
+	aPlayer = activePlayer.playerID;
+	win = 0;
+
+	for (int i = 8; i >= 1; --i)
+	{
+
+		for (int ix = 9; ix >= 1; --ix)
+		{
+
+			if (board[i][ix] == aPlayer &&
+				board[i - 1][ix - 1] == aPlayer &&
+				board[i - 2][ix - 2] == aPlayer &&
+				board[i - 3][ix - 3] == aPlayer)
+			{
+				win = 1;
+			}
+
+
+			if (board[i][ix] == aPlayer &&
+				board[i][ix - 1] == aPlayer &&
+				board[i][ix - 2] == aPlayer &&
+				board[i][ix - 3] == aPlayer)
+			{
+				win = 1;
+			}
+
+			if (board[i][ix] == aPlayer &&
+				board[i - 1][ix] == aPlayer &&
+				board[i - 2][ix] == aPlayer &&
+				board[i - 3][ix] == aPlayer)
+			{
+				win = 1;
+			}
+
+			if (board[i][ix] == aPlayer &&
+				board[i - 1][ix + 1] == aPlayer &&
+				board[i - 2][ix + 2] == aPlayer &&
+				board[i - 3][ix + 3] == aPlayer)
+			{
+				win = 1;
+			}
+
+			if (board[i][ix] == aPlayer &&
+				board[i][ix + 1] == aPlayer &&
+				board[i][ix + 2] == aPlayer &&
+				board[i][ix + 3] == aPlayer)
+			{
+				win = 1;
+			}
+		}
+
+	}
+
+	return win;
+}
+
+int FullBoard(char board[][10])
+{
+	int full;
+	full = 0;
+	for (int i = 1; i <= 7; ++i)
+	{
+		if (board[1][i] != ' ')
+			++full;
+	}
+
+	return full;
+}
+
+void PlayerWin(playerInfo activePlayer)
+{
+	cout << endl << activePlayer.playerName << " Connected Four, You Win!" << endl;
+}
+
+int restart(char board[][10])
+{
+	int restart;
+
+	cout << "Would you like to restart? Yes(1) No(2): ";
+	cin >> restart;
+	if (restart == 1)
+	{
+		for (int i = 1; i <= 6; i++)
+		{
+			for (int ix = 1; ix <= 7; ix++)
+			{
+				board[i][ix] = '  ';
+			}
+		}
 	}
 	else
-	{
-		cout << p2.name << " WinS!";
-
-	}
-	cout << "Congratulations!!!!!!!!";
+		cout << "Thanks For Playing!" << endl;
+	return restart;
 }
-//for printing the board or showing the output
-void printBoard(char board[][6])
-{
-	string line = "";
-	for(int i=0;i<6;i++)
-	{
-		cout<<i+1 <<" " << board[0][i] << " " << board[1][i] << " " << board[2][i] << " " << board[3][i] << " " << board[4][i] << " " << board[5][i] << " " << board[6][i] << "\n";
-
-	}
-	cout << "  1 2 3 4 5 6 7 \n\n";
-
-}
-
-bool gameOver(char board[][6], int play)
-{
-	vector<char> vertical;
-	vector<char> horizontal;
-	vector<char> DR;
-	vector<char> UR;
-
-	int row = 10;
-
-	bool rowFound = false;
-	bool full = true;
-	for (int i = 0; i < 7; i++)
-	{
-		for (int j = 0; j < 6; j++)
-		{
-			if (board[i][j] == ' ')
-			{
-				full = false;
-			}
-		}
-	}
-
-	for (int i = 0; i < 6; i++)
-	{
-		vertical.push_back(board[play][i]);
-		if (!rowFound && board[play][i] != ' ')
-		{
-			row = i;
-			rowFound = true;
-		}
-	}
-
-	int DRstart = row - play;
-	int URstart = row + play;
-	if (row != 10)
-	{
-		for (int i = 0; i < 7; i++)
-		{
-			horizontal.push_back(board[i][row]);
-			if (DRstart + i >= 0)
-			{
-				DR.push_back(board[i][DRstart + i]);
-			}
-			if (URstart - i <= 5)
-			{
-				UR.push_back(board[i][URstart - i]);
-			}
-
-		}
-
-	}
-	return(checkLine(vertical) || checkLine(horizontal) || checkLine(UR) || checkLine(DR) || full);
-}
-
-	bool checkLine(vector<char> line)
-	{
-		if (line.size() < 4) 
-		{
-			return(false);
-		}
-
-		for (int i = 0; i < int(line.size()) - 3; i++)
-		{
-			if (line[i] !=' '&& line[i]==line[i+1]&&line[i]==line[i+2]&&line[i]==line[i+3])
-			{
-				return(true);
-			}
-			
-		}
-		return(false);
-	}
-	string makePlayer()
-	{
-		string name;
-		cout << "Enter Name:";
-		cin >> name;
-		return name;
-	}
-
